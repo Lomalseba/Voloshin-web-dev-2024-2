@@ -24,7 +24,7 @@ def generate_comments(replies=True):
 
 def generate_post(i):
     return {
-        'title': 'Заголовок поста',
+        'title': fake.sentence(nb_words=6),
         'text': fake.paragraph(nb_sentences=100),
         'author': fake.name(),
         'date': fake.date_time_between(start_date='-2y', end_date='now'),
@@ -53,4 +53,6 @@ def about():
 
 @app.route('/post')
 def post_for_lab():
-    return render_template('post.html', title='post')
+    random_post_index = random.randint(0, len(posts_list) - 1)
+    post_data = posts_list[random_post_index]
+    return render_template('post.html', title='post', post=post_data)
