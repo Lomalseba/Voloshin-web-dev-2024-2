@@ -1,0 +1,29 @@
+{% extends 'base.html'%}
+
+{%block content%}
+<div class="row">
+    <div class="col-6">
+        <h1>Заголовок поста</h1>
+        <p>Имя, дата</p>
+    </div>
+    <div class="container d-flex justify-content-center align-items-center" style="height: 100vh;">
+        <img src="static/images/2d2ab7df-cdbc-48a8-a936-35bba702def5.jpg" alt="cool pik" class="img-fluid mx-auto d-block" style="max-width: 80%">
+    </div>
+    <div class="container" style="max-width:90%">
+    <h2>Оставьте комментарий</h2>
+    <form action="/submit_comment" method="post">
+            <div class="form-group">
+                <label for="comment">Комментарий:</label>
+                <textarea class="form-control" id="comment" name="comment" rows="3"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Отправить</button>
+        </form>
+    </div>
+</div>
+<footer>
+    <div class="container">
+        <hr>
+        <p>Волошин Александр, 221-331</p>
+    <div>
+</footer>
+{%endblock%}
