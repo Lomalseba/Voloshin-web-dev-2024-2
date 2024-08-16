@@ -1,11 +1,26 @@
 import random
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session, redirect, url_for
 from faker import Faker
+from dotenv import load_dotenv
+import os
+from models.user import db, User
+
+load_dotenv()
 
 fake = Faker()
 
 app = Flask(__name__)
 application = app
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db.init_app(app)
+
+with app.app_context():
+    db.create_all()
+
+app.secret_key = os.getenv('SECRET_KEY')
 
 images_ids = ['7d4e9175-95ea-4c5f-8be5-92a6b708bb3c',
               '2d2ab7df-cdbc-48a8-a936-35bba702def5',
@@ -36,7 +51,7 @@ posts_list = sorted([generate_post(i) for i in range(5)], key=lambda p: p['date'
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('about.html')
 
 @app.route('/posts')
 def posts():
@@ -96,3 +111,22 @@ def info():
     return render_template('info.html', title='info', url_parameters=url_parameters, headers=headers,
                                cookies=cookies, form_data=form_data, form_submitted=form_submitted,
                                number_correct=number_correct, number=number, error_message=error_message)
+
+@app.route("/authorization", methods=["POST", "GET"])
+def auth():
+    if "visit_count" not in session:
+        session["visit_count"] = 0
+
+    session["visit_count"] += 1
+    if request.method == "POST":
+        username = request.form['username']
+        password = request.form['password']
+
+        user = User.query.filter_by(username=username).first()
+        if user and user.check_password(password):
+            session['user_id'] = user.id
+            return redirect(url_for('info'))
+        else:
+            return 'Invalid username or password!'
+
+    return render_template("authorization.html", visit_count=session["visit_count"])
