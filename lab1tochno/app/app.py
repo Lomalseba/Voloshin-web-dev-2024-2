@@ -1,5 +1,5 @@
 import random
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from faker import Faker
 
 fake = Faker()
@@ -56,3 +56,43 @@ def post_for_lab():
     random_post_index = random.randint(0, len(posts_list) - 1)
     post_data = posts_list[random_post_index]
     return render_template('post.html', title='post', post=post_data)
+
+@app.route('/info', methods=['GET', 'POST'])
+def info():
+    url_parameters = request.args.to_dict()
+    headers = dict(request.headers)
+    cookies = request.cookies.to_dict()
+    form_data = request.form.to_dict() if request.method == 'POST' else {}
+
+    form_submitted = False
+    number_correct = True
+    error_message = ""
+    number = ""
+
+    if request.method == 'POST':
+        form_submitted = True
+        number = form_data['number']
+        only_num = [num for num in number if num.isdigit()]
+
+        if len(only_num) not in [10, 11]:
+            error_message = "Недопустимый ввод. Неверное количество цифр."
+            number_correct = False
+        for i, num in enumerate(form_data['number']):
+            if num not in ['1','2','3','4','5','6','7','8','9','.',' ','(',')','-','+']:
+                number_correct = False
+                error_message = "Недопустимый ввод. В номере телефона встречаются недопустимые символы."
+
+        if len(only_num) == 10:
+            only_num = ["8"] + only_num
+        if len(only_num) == 11:
+            only_num[0] = "8"
+            number = "".join(only_num)
+            number = f"{number[:1]}-{number[1:4]}-{number[4:7]}-{number[7:9]}-{number[9:]}"
+        else:
+            number_correct = False
+
+
+
+    return render_template('info.html', title='info', url_parameters=url_parameters, headers=headers,
+                               cookies=cookies, form_data=form_data, form_submitted=form_submitted,
+                               number_correct=number_correct, number=number, error_message=error_message)
