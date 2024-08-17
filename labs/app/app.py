@@ -1,7 +1,8 @@
 import random
-from flask import Flask, render_template, request, session, redirect, url_for
+from flask import Flask, render_template, request, session, redirect, url_for, make_response
 from faker import Faker
 from dotenv import load_dotenv
+from datetime import datetime, timedelta
 import os
 from models.user import db, User
 
@@ -112,21 +113,55 @@ def info():
                                cookies=cookies, form_data=form_data, form_submitted=form_submitted,
                                number_correct=number_correct, number=number, error_message=error_message)
 
+@app.context_processor
+def inject_user():
+    return {'logged_in': 'user_id' in session}
+
 @app.route("/authorization", methods=["POST", "GET"])
 def auth():
     if "visit_count" not in session:
         session["visit_count"] = 0
 
     session["visit_count"] += 1
+    error_message = None
+
     if request.method == "POST":
         username = request.form['username']
         password = request.form['password']
+        remember = request.form.get('remember')
 
         user = User.query.filter_by(username=username).first()
         if user and user.check_password(password):
             session['user_id'] = user.id
-            return redirect(url_for('info'))
-        else:
-            return 'Invalid username or password!'
+            session['username'] = username
 
-    return render_template("authorization.html", visit_count=session["visit_count"])
+            resp = make_response(redirect(url_for('info')))
+
+            if remember:
+                expires = datetime.now() + timedelta(days=7)
+                resp.set_cookie('user.id', str(user.id), expires=expires)
+                resp.set_cookie('username',username,  expires=expires)
+            else:
+                resp.set_cookie('user.id','1', expires=0)
+                resp.set_cookie('username', '1', expires=0)
+
+            return resp
+        else:
+            error_message = 'Invalid username or password!'
+
+    return render_template("authorization.html", visit_count=session["visit_count"],
+                           error_message=error_message)
+
+@app.route("/logout")
+def logout():
+    session.pop("user_id", 0)
+    session.pop("username", 0)
+    return redirect(url_for("auth"))
+
+@app.route("/srcrute)")
+def security():
+    if 'user_id' in session:
+        return render_template("security.html")
+    else:
+        error_message = "need to auth"
+        redirect(url_for('auth'), error_message=error_message)
