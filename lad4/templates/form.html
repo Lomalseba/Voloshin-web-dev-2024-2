@@ -1,0 +1,58 @@
+{% macro form(user, roles, errors)%}
+<form method="POST">
+    <div class="mb-3">
+        <label for="InputName" class="form-label">Имя</label>
+        <input type="text" name='name' class="form-control" id="InputName" value={{ user.first_name or ''}}>
+        {% if errors.first_name_error %}
+            <span style="color: red;">{{ errors.first_name_error }}</span>
+        {% endif %}
+    </div>
+    <div class="mb-3">
+        <label for="InputLastName" class="form-label">Фамилия</label>
+        <input type="text" name='lastname' class="form-control" id="InputLastName" value={{ user.second_name or ''}}>
+        {% if errors.second_name_error %}
+            <span style="color: red;">{{ errors.second_name_error }}</span>
+        {% endif %}
+    </div>
+    <div class="mb-3">
+        <label for="InputMiddleName" class="form-label">Отчество</label>
+        <input type="text" name='middlename' class="form-control" id="InputMiddleName" value={{ user.middle_name or ''}}>
+    </div>
+    {% if request.endpoint == "create_user" %}
+    <div class="mb-3">
+      <label for="InputLogin" class="form-label">Логин</label>
+      <input type="login" name='login' class="form-control" id="InputLogin" aria-describedby="emailHelp" value={{ user.login or ''}}>
+      {% if errors.login_error %}
+        <span style="color: red;">{{ errors.login_error }}</span>
+      {% endif %}
+    </div>
+    <div class="mb-3">
+      <label for="InputPassword" class="form-label">Пароль</label>
+      <input type="password" name='password'  class="form-control" id="InputPassword" value={{ user.password_hash or ''}}>
+    </div>
+    {% if errors.password_error %}
+        <span style="color: red;">{{ errors.password_error }}</span>
+    {% endif %}
+    <div class="mb-3">
+        <label for="InputRole" class="form-label">Роль</label>
+        <select  name='role'  class="form-control" id="InputRole">
+            {% for role in roles %}
+                <option value="{{ role.id }}">{{ role.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    {%endif%}
+    {% if request.endpoint == "edit_user" %}
+    <div class="mb-3">
+      <label for="InputLogin" class="label">Логин</label>
+      <p class="form-control">{{ user.login }}</p>
+    </div>
+    <div class="mb-3">
+        <label for="InputRole" class="label">Роль</label>
+        <p class="form-control">{{ user.role_name }}</p>
+    </div>
+    {% endif %}
+    <button type="submit" class="btn btn-primary">Отправить</button>
+  </form>
+
+{% endmacro %}

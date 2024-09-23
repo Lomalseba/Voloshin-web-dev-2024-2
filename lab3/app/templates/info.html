@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <h1>Submit Form</h1>
+    <form method="POST" class="row g-3 needs-validation" novalidate>
+        <div class="col-md-6">
+            <label for="number" class="form-label">Number:</label>
+            <input type="text" class="form-control {{ 'is-invalid' if not number_correct and form_submitted else '' }}" name="number" id="number" value="{{ form_data.get('number', '') }}" required>
+            {% if not number_correct and form_submitted %}
+                <div class="invalid-feedback">
+                    {{ error_message }}
+                </div>
+            {% endif %}
+        </div>
+        <div class="col-md-12">
+            <input type="submit" value="Submit" class="btn btn-primary">
+        </div>
+    </form>
+
+    {% if form_submitted %}
+        {% if number_correct %}
+            <h2>Your number: {{ number }}</h2>
+        {% endif %}
+    {% endif %}
+    <br>
+</div>
+
+<h2>Information Page</h2>
+
+<h3>URL Parameters</h3>
+<ul>
+{% for key, value in url_parameters.items() %}
+    <li><strong>{{ key }}:</strong> {{ value }}</li>
+{% endfor %}
+</ul>
+
+<h2>Request Headers</h2>
+<ul>
+{% for key, value in headers.items() %}
+    <li><strong>{{ key }}:</strong> {{ value }}</li>
+{% endfor %}
+</ul>
+
+<h2>Cookies</h2>
+<ul>
+{% for key, value in cookies.items() %}
+    <li><strong>{{ key }}:</strong> {{ value }}</li>
+{% endfor %}
+</ul>
+
+<h2>Form Parameters</h2>
+{% if form_data %}
+<ul>
+{% for key, value in form_data.items() %}
+    <li><strong>{{ key }}:</strong> {{ value }}</li>
+{% endfor %}
+</ul>
+{% else %}
+<p>No form data submitted.</p>
+{% endif %}
+
+{% endblock %}

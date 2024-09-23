@@ -1,0 +1,51 @@
+{% extends 'base.html'%}
+
+{%block content%}
+<div class="row">
+    <div class="col-6">
+        <h1>{{ post.title }}</h1>
+        <p>{{ post.author }}</p>
+        <p>{{ post.date }}</p>
+    </div>
+    <div class="container d-flex justify-content-center align-items-center" style="height: 100vh;">
+        <img src="static/images/2d2ab7df-cdbc-48a8-a936-35bba702def5.jpg" alt="cool pik" class="img-fluid mx-auto d-block" style="max-width: 80%">
+    </div>
+    <p>{{ post.text }}</p>
+    <div class="container" style="max-width:90%">
+    <form action="/submit_comment" method="post">
+            <div class="form-group">
+                <label for="comment">Комментарий:</label>
+                <textarea class="form-control" id="comment" name="comment" rows="3"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Отправить</button>
+        </form>
+    {% for comment in post.comments %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">{{ comment.author }}</h5>
+                    <p class="card-text">{{ comment.text }}</p>
+                    {% if comment.replies %}
+                        <h6>Ответы:</h6>
+                        {% for reply in comment.replies %}
+                            <div class="card mb-2">
+                                <div class="card-body">
+                                    <h6 class="card-title">{{ reply.author }}</h6>
+                                    <p class="card-text">{{ reply.text }}</p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+</div>
+
+<footer>
+    <div class="container">
+        <hr>
+        <p>Волошин Александр, 221-331</p>
+    <div>
+</footer>
+{%endblock%}

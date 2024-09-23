@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+{% if error_message %}
+<div class="alert alert-danger" role="alert">
+  {{ error_message }}
+</div>
+{% endif %}
+
+<form method="POST" action="{{ url_for('auth') }}">
+  <div class="mb-3">
+    <label for="login" class="form-label">Username</label>
+    <input type="text" class="form-control" name="username" id="login">
+  </div>
+  <div class="mb-3">
+    <label for="Password" class="form-label">Password</label>
+    <input type="password" class="form-control" name="password" id="Password">
+  </div>
+  <div class="mb-3 form-check">
+    <input type="checkbox" class="form-check-input" name="remember" id="Check">
+    <label class="form-check-label" for="Check">Remember me</label>
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+<h1>your visit_count: {{visit_count}}</h1>
+
+{% endblock %}
