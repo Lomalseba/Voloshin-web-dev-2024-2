@@ -3,7 +3,6 @@ from flask_login import LoginManager, UserMixin, login_user, current_user, logou
 app = Flask(__name__)
 application = app
 
-# app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 app.config.from_pyfile('config.py')
 
 login_manager = LoginManager()
@@ -62,9 +61,6 @@ def login():
 @app.route('/secret')
 @login_required
 def secret():
-    # if not  current_user.is_authenticated:
-    #     flash("Для доступа к этой странице нужно залогиниться", "alert-info")
-    #     return redirect(url_for("login")) 
     return render_template("secret.html")
 
 
@@ -83,8 +79,3 @@ def counter():
         session["counter"] = 1 
 
     return render_template('counter.html')
-
-# python3 -m venv ve
-# . ve/bin/activate -- Linux
-# ve\Scripts\activate -- Windows
-# pip install flask python-dotenv
